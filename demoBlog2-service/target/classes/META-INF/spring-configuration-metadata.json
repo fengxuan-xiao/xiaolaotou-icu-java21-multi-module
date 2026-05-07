@@ -1,0 +1,47 @@
+{
+  "groups": [
+    {
+      "name": "app.cors",
+      "type": "com.example.config.CorsProperties",
+      "sourceType": "com.example.config.CorsProperties"
+    },
+    {
+      "name": "jwt",
+      "type": "com.example.config.JwtProperties",
+      "sourceType": "com.example.config.JwtProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.cors.allow-credentials",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.example.config.CorsProperties"
+    },
+    {
+      "name": "app.cors.allowed-headers",
+      "type": "java.lang.String",
+      "sourceType": "com.example.config.CorsProperties"
+    },
+    {
+      "name": "app.cors.allowed-methods",
+      "type": "java.lang.String",
+      "sourceType": "com.example.config.CorsProperties"
+    },
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.lang.String",
+      "sourceType": "com.example.config.CorsProperties"
+    },
+    {
+      "name": "jwt.expiration",
+      "type": "java.lang.Long",
+      "sourceType": "com.example.config.JwtProperties"
+    },
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.example.config.JwtProperties"
+    }
+  ],
+  "hints": []
+}
