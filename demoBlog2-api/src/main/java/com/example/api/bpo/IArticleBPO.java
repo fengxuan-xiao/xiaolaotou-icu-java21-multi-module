@@ -5,6 +5,7 @@ import com.example.api.dto.common.PageResult;
 import com.example.api.dto.common.Result;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @FeignClient(contextId = "articleBPO",value = "xgh-demoBlog2-service", path = "/api")
 public interface IArticleBPO {
@@ -15,7 +16,7 @@ public interface IArticleBPO {
 
     // 新增文章 (POST)  Result<T>统一使用Result<T>封装数据，统一返回JSON数据
     @PostMapping("/articles")
-    public Result<ArticleDTO> articles(@RequestBody ArticleDTO articleDTO);
+    public Result<ArticleDTO> articles(@RequestBody ArticleDTO articleDTO,@RequestParam(value = "files", required = false) MultipartFile[] files);
 
     // 删除文章 (DELETE)
     @DeleteMapping("/articles/{id}")
