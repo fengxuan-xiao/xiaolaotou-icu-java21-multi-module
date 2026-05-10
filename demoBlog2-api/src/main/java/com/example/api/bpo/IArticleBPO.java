@@ -16,7 +16,7 @@ public interface IArticleBPO {
 
     // 新增文章 (POST)  Result<T>统一使用Result<T>封装数据，统一返回JSON数据
     @PostMapping("/articles")
-    public Result<ArticleDTO> articles(@RequestBody ArticleDTO articleDTO,@RequestParam(value = "files", required = false) MultipartFile[] files);
+    public Result<ArticleDTO> articles(@RequestPart ArticleDTO articleDTO,@RequestPart(value = "files", required = false) MultipartFile[] files);
 
     // 删除文章 (DELETE)
     @DeleteMapping("/articles/{id}")

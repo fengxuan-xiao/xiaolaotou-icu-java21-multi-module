@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.InsuredSummaryByRegionMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.entity.InsuredSummaryByRegion">
+        <id column="id" property="id" />
+        <result column="region_name" property="regionName" />
+        <result column="region_code" property="regionCode" />
+        <result column="fee_period" property="feePeriod" />
+        <result column="rel_fee_period" property="relFeePeriod" />
+        <result column="person_count" property="personCount" />
+        <result column="avg_age" property="avgAge" />
+        <result column="avg_payment_base" property="avgPaymentBase" />
+        <result column="avg_payment_amount" property="avgPaymentAmount" />
+        <result column="generate_time" property="generateTime" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="remark" property="remark" />
+        <result column="valid_status" property="validStatus" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, region_name, region_code, fee_period, rel_fee_period, person_count, avg_age, avg_payment_base, avg_payment_amount, generate_time, create_time, update_time, remark, valid_status
+    </sql>
+
+</mapper>

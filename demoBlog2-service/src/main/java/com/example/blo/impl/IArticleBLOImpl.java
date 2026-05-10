@@ -7,22 +7,34 @@ import com.example.api.dto.ArticleDTO;
 import com.example.api.dto.common.Result;
 import com.example.blo.IArticleBLO;
 import com.example.entity.Article;
+import com.example.entity.BlogAttachments;
 import com.example.mapper.ArticleMapper;
+import com.example.mapper.BlogAttachmentsMapper;
+import com.example.service.IFileStorageService;
 import com.example.utils.Idempotent;
+import com.example.utils.UserContextUtil;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> implements IArticleBLO  {
 
+    @Resource
+    private BlogAttachmentsMapper blogAttachmentsMapper;
 
-
+    @Autowired
+    private IFileStorageService fileStorageService;
 
     @Override
     public IPage<ArticleDTO> getPage(Integer page, Integer pageSize) {
@@ -50,7 +62,7 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
     @Override
     @Idempotent(key = "save_article", expireTime = 3000, message = "文章保存中，请勿重复提交")
     @Transactional(rollbackFor = Exception.class)
-    public void saveArticle(Article article) {
+    public void saveArticle(Article article, MultipartFile[] files) {
         log.info("开始保存文章: {}", article);
 
         if (article.getTitle() == null || article.getTitle().trim().isEmpty()) {
@@ -67,6 +79,56 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
         } else {
             throw new RuntimeException("文章保存失败");
         }
+
+
+        // 验证文章ID是否生成
+        if (article.getId() == null) {
+            throw new RuntimeException("文章ID生成失败");
+        }
+
+        log.info("文章保存成功，ID: {}", article.getId());
+
+        // 获取当前登录用户ID
+        Long currentUserId = UserContextUtil.requireCurrentUserId();
+        log.info("当前操作用户ID: {}", currentUserId);
+
+        // 如果有附件，则保存附件信息
+        if (files != null && files.length > 0) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) {
+                    try {
+                        String filePath = fileStorageService.storeFile(file, article.getId());
+
+                        BlogAttachments attachment = new BlogAttachments();
+                        attachment.setArticleId(article.getId());
+                        attachment.setFileName(file.getOriginalFilename());
+                        attachment.setFileSize(file.getSize());
+                        attachment.setFileType(file.getContentType());
+
+                        // 生成唯一文件名并保存文件（这里简化处理，实际项目中应保存到指定目录或OSS）
+                        //String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+                        attachment.setFilePath(filePath); // 实际项目中应该是完整的访问路径
+
+                        // 设置其他字段
+                        attachment.setUploadUserId(currentUserId); // 假设当前用户ID为1，实际应从认证信息中获取
+                        attachment.setIsDelete((byte) 0); // 未删除
+                        attachment.setCreateTime(LocalDateTime.now());
+                        attachment.setUpdateTime(LocalDateTime.now());
+
+                        blogAttachmentsMapper.insert(attachment);
+
+                        log.info("附件保存成功: {}", file.getOriginalFilename());
+                    } catch (Exception e) {
+                        log.error("附件保存失败: {}", file.getOriginalFilename(), e);
+                        throw new RuntimeException("附件保存失败: " + file.getOriginalFilename(), e);
+                    }
+                }
+            }
+        }
+
+
+
+
 
 
 

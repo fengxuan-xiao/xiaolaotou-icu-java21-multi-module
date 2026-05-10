@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -54,13 +55,13 @@ public class IArticleBPOImpl implements IArticleBPO {
     @Override
     @Operation(summary = "增加数据", description = "增加数据")
     @PostMapping(value = "/articles")
-    public Result<ArticleDTO> articles(ArticleDTO articleDTO) {
+    public Result<ArticleDTO> articles(ArticleDTO articleDTO, MultipartFile[] files) {
 
         try {
             Article article = new Article();
             BeanUtils.copyProperties(articleDTO, article);
 
-            iArticleBLO.saveArticle(article);
+            iArticleBLO.saveArticle(article, files);
 
             return Result.success(articleDTO, "保存成功");
         } catch (IllegalArgumentException e) {

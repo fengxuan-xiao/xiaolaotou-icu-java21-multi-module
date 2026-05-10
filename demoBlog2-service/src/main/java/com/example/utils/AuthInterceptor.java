@@ -16,6 +16,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
 
+    public static final String USER_ID_ATTRIBUTE = "userId";
+    private static final String USER_NAME_ATTRIBUTE = "userName";
     /**
      * 请求预处理拦截器，验证用户身份
      *
@@ -95,6 +97,12 @@ public class AuthInterceptor implements HandlerInterceptor {
             logger.info("Token验证成功");
             // 可选：将用户信息存入 request，供 Controller 使用
             // request.setAttribute("userId", JwtUtil.getUserId(realToken));
+            String userId = JwtUtil.getUserIdFromToken(realToken);
+            if (userId != null) {
+                request.setAttribute(USER_ID_ATTRIBUTE, userId);
+                //request.setAttribute(USER_NAME_ATTRIBUTE, JwtUtil.getUserNameFromToken(realToken));
+                logger.debug("用户ID已存入request: {}", userId);
+            }
             return true; // 放行
         } catch (Exception e) {
             logger.error("Token验证失败: {}", e.getMessage());

@@ -75,7 +75,9 @@ public class ILoginBLOImpl implements ILoginBLO {
 
         // 2. 生成 Token
         // 通常存入用户ID或用户名，建议存唯一标识如 ID
-        String token = JwtUtil.generateToken(String.valueOf(userDTO.getId()));
+        String token = JwtUtil.generateToken(String.valueOf(dbUser.getId()));
+
+        log.info("用户登录成功，用户ID: {}, 用户名: {}", dbUser.getId(), dbUser.getUsername());
 
 
         return Result.success(token);

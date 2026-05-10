@@ -143,11 +143,11 @@
             <artifactId>backport-util-concurrent</artifactId>
             <version>3.1</version>
         </dependency>
-        <dependency>
-            <groupId>com.example</groupId>
-            <artifactId>demoBlog2-service</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.example</groupId>-->
+<!--            <artifactId>demoBlog2-service</artifactId>-->
+<!--            <version>0.0.1-SNAPSHOT</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

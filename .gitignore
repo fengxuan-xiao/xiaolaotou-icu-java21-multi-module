@@ -1,0 +1,28 @@
+# --- Maven 构建产物 ---
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/
+!**/src/test/**/target/
+
+# --- 日志文件 ---
+logs/
+*.log
+*.log.*
+
+# --- IDE 配置文件 (根据你使用的 IDE 选择) ---
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+
+
+# VS Code
+.vscode/
+
+# --- 操作系统文件 ---
+.DS_Store
+Thumbs.db
+
