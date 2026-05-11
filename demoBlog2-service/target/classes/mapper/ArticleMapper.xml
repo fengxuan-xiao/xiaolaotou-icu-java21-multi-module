@@ -14,4 +14,26 @@
         id, title, content
     </sql>
 
+    <!-- 逻辑删除文章 -->
+    <update id="logicDeleteById">
+        UPDATE article
+        SET is_deleted = 1,
+            update_time = NOW()
+        WHERE id = #{id}
+          AND is_deleted = 0
+    </update>
+
+
+    <!-- 分页查询文章（包含附件信息） -->
+    <select id="selectArticlePageWithAttachments" resultMap="BaseResultMap">
+        SELECT DISTINCT
+            a.id, a.title, a.content, a.author_id, a.author_name,
+            a.create_time, a.update_time, a.is_deleted, a.status,
+            a.summary, a.cover_image, a.category_id, a.tags,
+            a.view_count, a.like_count, a.comment_count, a.sort
+        FROM article a
+                 LEFT JOIN blog_attachments ba ON a.id = ba.article_id AND ba.is_delete = 0
+        WHERE a.is_deleted = 0
+        ORDER BY a.create_time DESC
+    </select>
 </mapper>

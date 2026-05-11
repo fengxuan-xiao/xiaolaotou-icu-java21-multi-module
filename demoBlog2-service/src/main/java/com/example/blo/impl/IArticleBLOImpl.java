@@ -1,15 +1,18 @@
 package com.example.blo.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.api.dto.ArticleDTO;
+import com.example.api.dto.BlogAttachmentsDTO;
 import com.example.api.dto.common.Result;
 import com.example.blo.IArticleBLO;
 import com.example.entity.Article;
 import com.example.entity.BlogAttachments;
 import com.example.mapper.ArticleMapper;
 import com.example.mapper.BlogAttachmentsMapper;
+import com.example.service.IBlogAttachmentsService;
 import com.example.service.IFileStorageService;
 import com.example.utils.Idempotent;
 import com.example.utils.UserContextUtil;
@@ -36,6 +39,9 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
     @Autowired
     private IFileStorageService fileStorageService;
 
+    @Resource
+    private IBlogAttachmentsService blogAttachmentsService;
+
     @Override
     public IPage<ArticleDTO> getPage(Integer page, Integer pageSize) {
         Page<Article> articlePage = new Page<>(page, pageSize);
@@ -51,6 +57,24 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
                 .map(article -> {
                     ArticleDTO dto = new ArticleDTO();
                     BeanUtils.copyProperties(article, dto);
+
+                    List<BlogAttachments> attachments = blogAttachmentsService.list(
+                            new LambdaQueryWrapper<BlogAttachments>()
+                                    .eq(BlogAttachments::getArticleId, article.getId())
+                                    .eq(BlogAttachments::getIsDelete, 0)
+                    );
+
+                    if (attachments != null && !attachments.isEmpty()) {
+                        List<BlogAttachmentsDTO> attachmentDTOs = attachments.stream()
+                                .map(att -> {
+                                    BlogAttachmentsDTO attDto = new BlogAttachmentsDTO();
+                                    BeanUtils.copyProperties(att, attDto);
+                                    return attDto;
+                                })
+                                .collect(Collectors.toList());
+                        dto.setAttachments(attachmentDTOs);
+                    }
+
                     return dto;
                 })
                 .collect(Collectors.toList());

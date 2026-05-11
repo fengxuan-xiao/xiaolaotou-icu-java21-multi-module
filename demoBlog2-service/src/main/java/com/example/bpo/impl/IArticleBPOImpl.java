@@ -29,8 +29,6 @@ public class IArticleBPOImpl implements IArticleBPO {
     @Autowired
     private IArticleBLO iArticleBLO;
 
-    @Autowired
-    private IArticleService articleService;
 
 
     @Override

@@ -3,6 +3,7 @@ package com.example.api.dto;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 public class ArticleDTO {
@@ -23,4 +24,6 @@ public class ArticleDTO {
     private Integer likeCount;
     private Integer commentCount;
     private Integer sort;
+
+    List<BlogAttachmentsDTO> attachments;
 }

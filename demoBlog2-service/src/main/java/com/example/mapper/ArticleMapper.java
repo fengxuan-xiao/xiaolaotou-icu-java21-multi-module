@@ -1,5 +1,7 @@
 package com.example.mapper;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.entity.Article;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import feign.Param;
@@ -20,5 +22,13 @@ public interface ArticleMapper extends BaseMapper<Article> {
      * @return 影响行数
      */
     int logicDeleteById(@Param("id") Long id);
+
+
+    /**
+     * 分页查询文章（包含附件信息）
+     * @param page 分页对象
+     * @return 文章分页结果
+     */
+    IPage<Article> selectArticlePageWithAttachments(Page<Article> page);
 
 }
