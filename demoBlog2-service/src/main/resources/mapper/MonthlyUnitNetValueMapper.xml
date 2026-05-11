@@ -20,4 +20,17 @@
         id, price_date, unit_net_value, is_business_use, generate_time, create_time, update_time, remark, valid_status
     </sql>
 
+
+    <!-- 按月份统计净值 -->
+    <select id="selectUnitnetValueByPriceDate" resultType="java.util.HashMap">
+        SELECT
+            price_date,
+            unit_net_value
+        FROM monthly_unit_net_value
+        WHERE price_date BETWEEN #{startDate} AND #{endDate}
+          AND is_business_use = 1 AND valid_status = 1
+        GROUP BY price_date
+        ORDER BY price_date ASC
+    </select>
+
 </mapper>

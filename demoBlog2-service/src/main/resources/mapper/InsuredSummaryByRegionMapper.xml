@@ -25,4 +25,60 @@
         id, region_name, region_code, fee_period, rel_fee_period, person_count, avg_age, avg_payment_base, avg_payment_amount, generate_time, create_time, update_time, remark, valid_status
     </sql>
 
+    <!-- 按月份统计平均参保人数 -->
+    <select id="selectAvgPersonCountByMonth" resultType="java.util.HashMap">
+        SELECT
+            fee_period,
+            AVG(person_count) AS avg_person_count
+        FROM insured_summary_by_region
+        WHERE fee_period BETWEEN #{startDate} AND #{endDate}
+          AND valid_status = 1
+        GROUP BY fee_period
+        ORDER BY fee_period ASC
+    </select>
+
+    <!-- 按月份统计平均参保金额 -->
+    <select id="selectAvgPaymentAmountCountByMonth" resultType="java.util.HashMap">
+        SELECT
+            fee_period,
+            AVG(avg_payment_amount) AS avg_payment_amount_count
+        FROM insured_summary_by_region
+        WHERE fee_period BETWEEN #{startDate} AND #{endDate}
+          AND valid_status = 1
+        GROUP BY fee_period
+        ORDER BY fee_period ASC
+    </select>
+
+    <!-- 统计年龄段分布（用于饼图）-->
+    <select id="selectAgeGroupDistribution" resultType="java.util.HashMap">
+        SELECT
+            CASE
+                WHEN avg_age &lt; 20 THEN '20岁以下'
+                WHEN avg_age &gt;= 20 AND avg_age &lt; 25 THEN '20-24岁'
+                WHEN avg_age &gt;= 25 AND avg_age &lt; 28 THEN '25-27岁'
+                WHEN avg_age &gt;= 28 AND avg_age &lt; 30 THEN '28-29岁'
+                ELSE '30岁以上'
+                END AS age_group,
+            COUNT(*) AS person_count
+        FROM insured_summary_by_region
+        WHERE fee_period BETWEEN #{startDate} AND #{endDate}
+          AND valid_status = 1
+        GROUP BY
+            CASE
+                WHEN avg_age &lt; 20 THEN '20岁以下'
+                WHEN avg_age &gt;= 20 AND avg_age &lt; 25 THEN '20-24岁'
+                WHEN avg_age &gt;= 25 AND avg_age &lt; 28 THEN '25-27岁'
+                WHEN avg_age &gt;= 28 AND avg_age &lt; 30 THEN '28-29岁'
+                ELSE '30岁以上'
+                END
+        ORDER BY
+            CASE age_group
+                WHEN '20岁以下' THEN 1
+                WHEN '20-24岁' THEN 2
+                WHEN '25-27岁' THEN 3
+                WHEN '28-29岁' THEN 4
+                WHEN '30岁以上' THEN 5
+                END
+    </select>
+
 </mapper>
