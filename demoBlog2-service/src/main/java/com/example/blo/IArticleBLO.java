@@ -16,4 +16,12 @@ public interface IArticleBLO extends IService<Article> {
 
     //boolean save = articleService.save(article);
     void saveArticle(Article article, MultipartFile[] files);
+
+    /**
+     * 逻辑删除文章
+     * @param id 文章ID
+     * @return 是否删除成功
+     */
+    boolean logicDeleteById(String id);
+
 }

@@ -14,4 +14,12 @@
         id, title, content
     </sql>
 
+    <!-- 逻辑删除文章 -->
+    <update id="logicDeleteById">
+        UPDATE article
+        SET is_deleted = 1,
+            update_time = NOW()
+        WHERE id = #{id}
+          AND is_deleted = 0
+    </update>
 </mapper>

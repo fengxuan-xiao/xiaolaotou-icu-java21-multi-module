@@ -162,4 +162,12 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
 
         log.info("文章保存成功，ID: {}", article.getId());
     }
+
+
+
+    @Override
+    public boolean logicDeleteById(String id) {
+        int rows = baseMapper.logicDeleteById(Long.parseLong(id));
+        return rows > 0;
+    }
 }

@@ -82,7 +82,23 @@ public class IArticleBPOImpl implements IArticleBPO {
     @DeleteMapping("/articles/{id}")
     public Result<ArticleDTO> deleteArticle(@PathVariable String id) {
 
-        articleService.removeById(id); // 调用MyBatis-Plus的removeById()方法删除数据
-        return Result.success("删除成功");
+        //articleService.removeById(id); // 调用MyBatis-Plus的removeById()方法删除数据
+        //return Result.success("删除成功");
+        //boolean success = articleService.removeById(id);
+
+//        if (success) {
+//            return Result.success("删除成功");
+//        } else {
+//            return Result.error("删除失败，文章不存在");
+//        }
+
+        //boolean success = IArticleBLO.logicDeleteById(Long.parseLong(id));
+        boolean success = iArticleBLO.logicDeleteById(id);
+
+        if (success) {
+            return Result.success("删除成功");
+        } else {
+            return Result.error("删除失败，文章不存在");
+        }
     }
 }

@@ -1,9 +1,7 @@
 package com.example.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -70,6 +68,7 @@ public class Article implements Serializable {
      * 0未删除 1已删除
      */
     @TableField("is_deleted")
+    @TableLogic
     private Byte isDeleted;
 
     /**
