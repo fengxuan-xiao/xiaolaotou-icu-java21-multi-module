@@ -73,6 +73,36 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
             throw new IllegalArgumentException("文章内容不能为空");
         }
 
+        // 获取当前登录用户ID
+        Long currentUserId = UserContextUtil.requireCurrentUserId();
+        log.info("当前操作用户ID: {}", currentUserId);
+        if (currentUserId == null) {
+            // 如果拦截器没生效，这里可以根据业务决定是抛异常还是给默认值
+            currentUserId = 1L;
+        }
+
+
+        // 如果是新增操作（ID为空）
+        if (article.getId() == null) {
+            article.setAuthorId(currentUserId);
+            article.setViewCount(0L);
+            article.setStatus(article.getStatus() == null ? 1 : article.getStatus()); // 默认发布
+            //article.setIsTop(article.getIsTop() == null ? 0 : article.getIsTop());
+
+            // 自动生成摘要：取内容的前100个字符
+            if (article.getSummary() == null || article.getSummary().isEmpty()) {
+                String plainText = article.getContent().replaceAll("\\n", "").replaceAll("#", "");
+                article.setSummary(plainText.length() > 100 ? plainText.substring(0, 100) + "..." : plainText);
+            }
+        } else {
+            // 如果是更新操作，保留原有的阅读量和作者ID
+            Article oldArticle = this.getById(article.getId());
+            if (oldArticle != null) {
+                article.setViewCount(oldArticle.getViewCount());
+                article.setAuthorId(oldArticle.getAuthorId());
+            }
+        }
+
         boolean saved = this.save(article);
         if (saved) {
             Result.success(article, "保存成功");
@@ -88,9 +118,7 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
 
         log.info("文章保存成功，ID: {}", article.getId());
 
-        // 获取当前登录用户ID
-        Long currentUserId = UserContextUtil.requireCurrentUserId();
-        log.info("当前操作用户ID: {}", currentUserId);
+
 
         // 如果有附件，则保存附件信息
         if (files != null && files.length > 0) {

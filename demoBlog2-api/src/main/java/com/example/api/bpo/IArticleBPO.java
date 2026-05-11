@@ -20,6 +20,6 @@ public interface IArticleBPO {
 
     // 删除文章 (DELETE)
     @DeleteMapping("/articles/{id}")
-    public Result<ArticleDTO> deleteArticle(@RequestParam(defaultValue = "1") Integer id);
+    public Result<ArticleDTO> deleteArticle(@PathVariable String id);
 
 }

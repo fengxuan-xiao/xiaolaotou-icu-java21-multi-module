@@ -80,7 +80,7 @@ public class IArticleBPOImpl implements IArticleBPO {
     @Override
     @Operation(summary = "删除数据", description = "删除数据")
     @DeleteMapping("/articles/{id}")
-    public Result<ArticleDTO> deleteArticle(@RequestParam(defaultValue = "1") Integer id) {
+    public Result<ArticleDTO> deleteArticle(@PathVariable String id) {
 
         articleService.removeById(id); // 调用MyBatis-Plus的removeById()方法删除数据
         return Result.success("删除成功");

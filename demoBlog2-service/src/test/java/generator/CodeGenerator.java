@@ -47,7 +47,7 @@ public class CodeGenerator {
      * 需要生成的表名列表
      */
     private static final String[] TABLE_NAMES = {
-            "blog_attachments","insured_summary_by_region","monthly_unit_net_value"
+            "article"
     };
 
     public static void main(String[] args) {
@@ -92,6 +92,16 @@ public class CodeGenerator {
      * 执行代码生成 - 使用默认模板
      */
     private static void generateCode(String[] tableNames) {
+
+        // 【临时方案】如果不升级版本，先手动删掉旧文件
+        for (String tableName : tableNames) {
+            String entityName = convertTableNameToEntityName(tableName);
+            String basePath = PROJECT_PATH + "/src/main/java/" + PACKAGE_NAME.replace(".", "/");
+            new File(basePath + "/entity/" + entityName + ".java").delete();
+            new File(basePath + "/mapper/" + entityName + "Mapper.java").delete();
+            // ... 删掉其他你想覆盖的文件
+        }
+
         FastAutoGenerator.create(DB_URL, DB_USERNAME, DB_PASSWORD)
                 .globalConfig(builder -> {
                     builder.author(AUTHOR)
@@ -111,6 +121,8 @@ public class CodeGenerator {
                 .strategyConfig(builder -> {
                     builder.addInclude(tableNames)
                             .addTablePrefix("t_", "sys_")
+                            // 开启全局文件覆盖
+                            //.enableFileOverride()
                             .entityBuilder()
                             .enableLombok()
                             .enableTableFieldAnnotation()
