@@ -6,6 +6,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 public class UserContextUtil {
 
+    public static final String USER_NAME_ATTRIBUTE = "userName";
+
     /**
      * 从当前请求中获取用户ID
      *
@@ -36,6 +38,34 @@ public class UserContextUtil {
             }
 
             return null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * 从当前请求中获取用户名
+     *
+     * @return 用户名，如果未登录则返回null
+     */
+    public static String getCurrentUserName() {
+        try {
+            ServletRequestAttributes attributes =
+                    (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+            if (attributes == null) {
+                return null;
+            }
+
+            HttpServletRequest request = attributes.getRequest();
+            Object userNameObj = request.getAttribute(USER_NAME_ATTRIBUTE);
+
+            if (userNameObj == null) {
+                return null;
+            }
+
+            return userNameObj.toString();
         } catch (Exception e) {
             return null;
         }
@@ -89,5 +119,18 @@ public class UserContextUtil {
             throw new RuntimeException("用户未登录");
         }
         return userId;
+    }
+    /**
+     * 获取当前用户名，如果未登录则抛出异常
+     *
+     * @return 用户名
+     * @throws RuntimeException 如果用户未登录
+     */
+    public static String requireCurrentUserName() {
+        String userName = getCurrentUserName();
+        if (userName == null || userName.isEmpty()) {
+            throw new RuntimeException("用户未登录");
+        }
+        return userName;
     }
 }

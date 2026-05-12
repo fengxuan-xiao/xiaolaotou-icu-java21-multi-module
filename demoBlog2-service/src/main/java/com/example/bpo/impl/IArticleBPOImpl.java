@@ -32,7 +32,7 @@ public class IArticleBPOImpl implements IArticleBPO {
 
 
     @Override
-    @Operation(summary = "用户注册", description = "用户注册接口")
+    @Operation(summary = "分页查询数据", description = "分页查询数据接口")
     @GetMapping(value = "/articlesPage")
     public Result<PageResult<ArticleDTO>> articlesPage(@RequestParam(defaultValue = "1") Integer page,
                                                        @RequestParam(defaultValue = "10") Integer pageSize) {

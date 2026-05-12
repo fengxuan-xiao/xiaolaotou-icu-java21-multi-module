@@ -27,9 +27,22 @@ public class JwtUtil {
      * @param userId 用户唯一标识，将作为token的主题和自定义声明
      * @return 生成的JWT token字符串，包含用户ID、签发时间、过期时间等信息，使用HS256算法签名
      */
-    public static String generateToken(String userId) {
+    /*public static String generateToken(String userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(userId)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(SECRET_KEY, io.jsonwebtoken.SignatureAlgorithm.HS256)
+                .compact();
+    }*/
+    public static String generateToken(String userId, String username) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        claims.put("username", username);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -69,6 +82,15 @@ public class JwtUtil {
         try {
             Claims claims = verifyToken(token);
             return claims.get("userId", String.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static String getUserNameFromToken(String token) {
+        try {
+            Claims claims = verifyToken(token);
+            return claims.get("username", String.class);
         } catch (Exception e) {
             return null;
         }

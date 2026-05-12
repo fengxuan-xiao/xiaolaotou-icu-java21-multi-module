@@ -17,7 +17,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(AuthInterceptor.class);
 
     public static final String USER_ID_ATTRIBUTE = "userId";
-    private static final String USER_NAME_ATTRIBUTE = "userName";
+    public static final String USER_NAME_ATTRIBUTE = "userName";
     /**
      * 请求预处理拦截器，验证用户身份
      *
@@ -100,6 +100,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             String userId = JwtUtil.getUserIdFromToken(realToken);
             if (userId != null) {
                 request.setAttribute(USER_ID_ATTRIBUTE, userId);
+                request.setAttribute(USER_NAME_ATTRIBUTE, JwtUtil.getUserNameFromToken(realToken));
                 //request.setAttribute(USER_NAME_ATTRIBUTE, JwtUtil.getUserNameFromToken(realToken));
                 logger.debug("用户ID已存入request: {}", userId);
             }
