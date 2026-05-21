@@ -6,6 +6,9 @@ import com.example.entity.Article;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import feign.Param;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * <p>
  * 文章表 Mapper 接口
@@ -31,4 +34,44 @@ public interface ArticleMapper extends BaseMapper<Article> {
      */
     IPage<Article> selectArticlePageWithAttachments(Page<Article> page);
 
+
+    /**
+     * 统计已发布文章数量
+     * @return 已发布文章数
+     */
+    Integer selectPublishedCount();
+
+    /**
+     * 统计草稿文章数量
+     * @return 草稿文章数
+     */
+    Integer selectDraftCount();
+
+    /**
+     * 统计总浏览量
+     * @return 总浏览量
+     */
+    Long selectTotalViewCount();
+
+    /**
+     * 按日期范围查询文章列表
+     * @param startDate 开始日期
+     * @param endDate 结束日期
+     * @return 文章列表
+     */
+    List<Map<String, Object>> selectArticleListByDateRange(@Param("startDate") String startDate,
+                                                           @Param("endDate") String endDate);
+
+
+    /**
+     * 分类统计
+     * @return 分类统计数据
+     */
+    List<Map<String, Object>> selectCategoryStatistics();
+
+    /**
+     * 标签统计
+     * @return 标签统计数据
+     */
+    List<Map<String, Object>> selectTagStatistics();
 }

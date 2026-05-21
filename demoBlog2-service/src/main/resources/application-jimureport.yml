@@ -1,0 +1,9 @@
+# JimuReport 配置
+jimureport:
+  # 是否启用报表
+  enabled: true
+  # 报表访问路径
+  path: /jmreport
+  # 数据库配置（如果需要独立数据源）
+  datasource:
+    enabled: false

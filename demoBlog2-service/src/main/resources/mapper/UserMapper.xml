@@ -20,4 +20,21 @@
         id, username, password, nickname, email, phone, status, create_time, update_time
     </sql>
 
+
+    <!-- 查询用户活动统计 -->
+    <select id="selectUserActivityStats" resultType="java.util.HashMap">
+        SELECT
+            u.id as user_id,
+            u.username,
+            u.nickname,
+            COUNT(a.id) as article_count,
+            COALESCE(SUM(a.view_count), 0) as total_views,
+            COALESCE(SUM(a.like_count), 0) as total_likes,
+            MAX(a.create_time) as last_article_time
+        FROM user u
+                 LEFT JOIN article a ON u.id = a.author_id AND a.is_deleted = 0
+        WHERE u.status = 1
+        GROUP BY u.id, u.username, u.nickname
+        ORDER BY article_count DESC
+    </select>
 </mapper>

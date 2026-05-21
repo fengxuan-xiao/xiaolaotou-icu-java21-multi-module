@@ -34,6 +34,19 @@
         <easyexcel.version>3.3.3</easyexcel.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jeecg</id>
+            <name>Jeecg Repository</name>
+            <url>https://maven.jeecg.org/nexus/content/repositories/jeecg</url>
+        </repository>
+        <repository>
+            <id>aliyunmaven</id>
+            <name>Aliyun Maven</name>
+            <url>https://maven.aliyun.com/repository/public</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>

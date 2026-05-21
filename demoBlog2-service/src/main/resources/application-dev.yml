@@ -80,3 +80,9 @@ app:
       - application/vnd.ms-excel
       - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
       - application/pdf
+
+jimureport:
+  enabled: true
+  path: /jmreport
+  datasource:
+    enabled: false

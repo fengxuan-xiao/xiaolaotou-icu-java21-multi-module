@@ -36,4 +36,74 @@
         WHERE a.is_deleted = 0 and a.status = 1
         ORDER BY a.create_time DESC
     </select>
+
+
+    <!-- 统计已发布文章数量 -->
+    <select id="selectPublishedCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM article
+        WHERE is_deleted = 0 AND status = 1
+    </select>
+
+    <!-- 统计草稿文章数量 -->
+    <select id="selectDraftCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM article
+        WHERE is_deleted = 0 AND status = 0
+    </select>
+
+    <!-- 统计总浏览量 -->
+    <select id="selectTotalViewCount" resultType="java.lang.Long">
+        SELECT COALESCE(SUM(view_count), 0)
+        FROM article
+        WHERE is_deleted = 0
+    </select>
+
+    <!-- 按日期范围查询文章列表 -->
+    <select id="selectArticleListByDateRange" resultType="java.util.HashMap">
+        SELECT
+        DATE(create_time) as article_date,
+        COUNT(*) as article_count,
+        SUM(view_count) as total_views,
+        SUM(like_count) as total_likes
+        FROM article
+        WHERE is_deleted = 0
+        <if test="startDate != null and startDate != ''">
+            AND create_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND create_time &lt;= #{endDate}
+        </if>
+        GROUP BY DATE(create_time)
+        ORDER BY article_date DESC
+    </select>
+
+
+
+
+    <!-- 分类统计 -->
+    <select id="selectCategoryStatistics" resultType="java.util.HashMap">
+        SELECT
+            category_id,
+            COUNT(*) as article_count,
+            SUM(view_count) as total_views,
+            SUM(like_count) as total_likes
+        FROM article
+        WHERE is_deleted = 0 AND category_id IS NOT NULL
+        GROUP BY category_id
+        ORDER BY article_count DESC
+    </select>
+
+    <!-- 标签统计 -->
+    <select id="selectTagStatistics" resultType="java.util.HashMap">
+        SELECT
+            tags,
+            COUNT(*) as article_count,
+            SUM(view_count) as total_views
+        FROM article
+        WHERE is_deleted = 0 AND tags IS NOT NULL AND tags != ''
+        GROUP BY tags
+        ORDER BY article_count DESC
+            LIMIT 20
+    </select>
 </mapper>
