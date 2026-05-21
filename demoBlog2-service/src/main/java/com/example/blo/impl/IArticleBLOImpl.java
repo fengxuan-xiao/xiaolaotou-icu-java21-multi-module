@@ -36,6 +36,10 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
     @Resource
     private BlogAttachmentsMapper blogAttachmentsMapper;
 
+
+    @Resource
+    ArticleMapper  articleMapper;
+
     @Autowired
     private IFileStorageService fileStorageService;
 
@@ -86,6 +90,80 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
         dtoPage.setRecords(dtoList);
         return dtoPage;
     }
+
+
+//    @Override
+//    public IPage<ArticleDTO> getPageHome(Integer page, Integer pageSize) {
+//        Page<Article> articlePage = new Page<>(page, pageSize);
+//
+//        LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
+//        wrapper.orderByDesc(Article::getCreateTime);
+//
+//        //IPage<Article> result = this.page(articlePage,wrapper);
+//        IPage<Article> result = articleMapper.selectArticlePageWithAttachments(articlePage);
+//
+//        Page<ArticleDTO> dtoPage = new Page<>();
+//        dtoPage.setCurrent(result.getCurrent());
+//        dtoPage.setSize(result.getSize());
+//        dtoPage.setTotal(result.getTotal());
+//        dtoPage.setPages(result.getPages());
+//
+//        ArticleDTO dto = new ArticleDTO();
+//        BeanUtils.copyProperties(article, dto);
+//
+//
+//        dtoPage.setRecords(result.getRecords());
+//        return dtoPage;
+//    }
+
+
+    @Override
+    public IPage<ArticleDTO> getPageHome(Integer page, Integer pageSize) {
+        Page<Article> articlePage = new Page<>(page, pageSize);
+
+        LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(Article::getCreateTime);
+
+        //IPage<Article> result = this.page(articlePage,wrapper);
+        IPage<Article> result = articleMapper.selectArticlePageWithAttachments(articlePage);
+
+        Page<ArticleDTO> dtoPage = new Page<>();
+        dtoPage.setCurrent(result.getCurrent());
+        dtoPage.setSize(result.getSize());
+        dtoPage.setTotal(result.getTotal());
+        dtoPage.setPages(result.getPages());
+
+        List<ArticleDTO> dtoList = result.getRecords().stream()
+                .map(article -> {
+                    ArticleDTO dto = new ArticleDTO();
+                    BeanUtils.copyProperties(article, dto);
+
+                    List<BlogAttachments> attachments = blogAttachmentsService.list(
+                            new LambdaQueryWrapper<BlogAttachments>()
+                                    .eq(BlogAttachments::getArticleId, article.getId())
+                                    .eq(BlogAttachments::getIsDelete, 0)
+                    );
+
+                    if (attachments != null && !attachments.isEmpty()) {
+                        List<BlogAttachmentsDTO> attachmentDTOs = attachments.stream()
+                                .map(att -> {
+                                    BlogAttachmentsDTO attDto = new BlogAttachmentsDTO();
+                                    BeanUtils.copyProperties(att, attDto);
+                                    return attDto;
+                                })
+                                .collect(Collectors.toList());
+                        dto.setAttachments(attachmentDTOs);
+                    }
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
+
+        dtoPage.setRecords(dtoList);
+        return dtoPage;
+    }
+
+
 
     @Override
     @Idempotent(key = "save_article", expireTime = 3000, message = "文章保存中，请勿重复提交")

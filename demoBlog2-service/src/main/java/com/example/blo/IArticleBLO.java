@@ -14,6 +14,8 @@ public interface IArticleBLO extends IService<Article> {
 
     IPage<ArticleDTO> getPage(Integer page, Integer pageSize);
 
+    IPage<ArticleDTO> getPageHome(Integer page, Integer pageSize);
+
     //boolean save = articleService.save(article);
     void saveArticle(Article article, MultipartFile[] files);
 

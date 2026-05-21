@@ -49,6 +49,24 @@ public class IArticleBPOImpl implements IArticleBPO {
         return Result.success(pageResult);
 
     }
+    @Override
+    @Operation(summary = "博客首页分页查询数据", description = "博客首页分页查询数据接口")
+    @GetMapping(value = "/articlesPageHome")
+    public Result<PageResult<ArticleDTO>> articlesPageHome(@RequestParam(defaultValue = "1") Integer page,
+                                                       @RequestParam(defaultValue = "10") Integer pageSize) {
+
+        IPage<ArticleDTO> resultPage = iArticleBLO.getPageHome(page, pageSize);
+
+        PageResult<ArticleDTO> pageResult = PageResult.of(
+                resultPage.getRecords(),
+                resultPage.getTotal(),
+                (int) resultPage.getCurrent(),
+                (int) resultPage.getSize()
+        );
+
+        return Result.success(pageResult);
+
+    }
 
     @Override
     @Operation(summary = "增加数据", description = "增加数据")

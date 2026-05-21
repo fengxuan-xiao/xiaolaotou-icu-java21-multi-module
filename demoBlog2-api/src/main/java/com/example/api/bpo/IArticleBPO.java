@@ -13,6 +13,9 @@ public interface IArticleBPO {
     @GetMapping("/articlesPage")
     public Result<PageResult<ArticleDTO>> articlesPage(@RequestParam(defaultValue = "1") Integer page,
                                                    @RequestParam(defaultValue = "10") Integer pageSize);
+    @GetMapping("/articlesPageHome")
+    public Result<PageResult<ArticleDTO>> articlesPageHome(@RequestParam(defaultValue = "1") Integer page,
+                                                   @RequestParam(defaultValue = "10") Integer pageSize);
 
     // 新增文章 (POST)  Result<T>统一使用Result<T>封装数据，统一返回JSON数据
     @PostMapping("/articles")
