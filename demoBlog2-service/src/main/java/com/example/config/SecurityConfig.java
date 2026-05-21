@@ -14,8 +14,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()  // 关闭csrf，解决跨域
+                .headers().frameOptions().disable()  // 禁用 X-Frame-Options
+                .and()
                 .authorizeHttpRequests()
                 .anyRequest().permitAll(); // 全部放行
+
+
 
         return http.build();
     }

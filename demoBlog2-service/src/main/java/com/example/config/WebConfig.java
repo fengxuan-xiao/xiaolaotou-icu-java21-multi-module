@@ -35,6 +35,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/**") // 保护文章接口
                 //.addPathPatterns("/user/info")   // 保护用户信息接口
                 .addPathPatterns("/excelbatch/**")   // 保护导入相关接口
+                .addPathPatterns("/report/**")
                 .excludePathPatterns("/user/login", "/user/register"); // 排除登录注册接口
     }
 
