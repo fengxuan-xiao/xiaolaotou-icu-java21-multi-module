@@ -47,7 +47,7 @@ public class CodeGenerator {
      * 需要生成的表名列表
      */
     private static final String[] TABLE_NAMES = {
-            "import_record"
+            "social_tax_msg","tax_receive_msg"
     };
 
     public static void main(String[] args) {

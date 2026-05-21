@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.TaxReceiveMsgMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.example.entity.TaxReceiveMsg">
+        <id column="id" property="id" />
+        <result column="data_no" property="dataNo" />
+        <result column="msg_id" property="msgId" />
+        <result column="unit_name" property="unitName" />
+        <result column="unit_code" property="unitCode" />
+        <result column="fee_period" property="feePeriod" />
+        <result column="fee_period_ref" property="feePeriodRef" />
+        <result column="area_code" property="areaCode" />
+        <result column="amount" property="amount" />
+        <result column="tax_serial_no" property="taxSerialNo" />
+        <result column="receive_status" property="receiveStatus" />
+        <result column="process_time" property="processTime" />
+        <result column="process_result" property="processResult" />
+        <result column="process_msg" property="processMsg" />
+        <result column="reply_status" property="replyStatus" />
+        <result column="reply_time" property="replyTime" />
+        <result column="is_repeat" property="isRepeat" />
+        <result column="status" property="status" />
+        <result column="remark" property="remark" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_deleted" property="isDeleted" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, data_no, msg_id, unit_name, unit_code, fee_period, fee_period_ref, area_code, amount, tax_serial_no, receive_status, process_time, process_result, process_msg, reply_status, reply_time, is_repeat, status, remark, create_time, update_time, is_deleted
+    </sql>
+
+</mapper>
