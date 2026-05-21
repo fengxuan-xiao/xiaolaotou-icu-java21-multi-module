@@ -48,7 +48,7 @@ public class IExcelBatchBLOImpl implements IExcelBatchBLO {
         //, String operator
         String operator1 = UserContextUtil.getCurrentUserIdStr();
         String userName = UserContextUtil.requireCurrentUserName();
-        String currentUserName = UserContextUtil.getCurrentUserName();
+//        String currentUserName = UserContextUtil.getCurrentUserName();
         String operator = "admin";
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("文件不能为空");

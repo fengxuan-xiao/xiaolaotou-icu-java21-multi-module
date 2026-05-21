@@ -32,9 +32,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**");
 
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/api/articles")      // 匹配 /api/articles
-                .addPathPatterns("/api/articles/**") // 保护文章接口
-                .addPathPatterns("/user/info")   // 保护用户信息接口
+                .addPathPatterns("/api/**") // 保护文章接口
+                //.addPathPatterns("/user/info")   // 保护用户信息接口
+                .addPathPatterns("/excelbatch/**")   // 保护导入相关接口
                 .excludePathPatterns("/user/login", "/user/register"); // 排除登录注册接口
     }
 

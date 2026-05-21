@@ -45,7 +45,11 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
     @Override
     public IPage<ArticleDTO> getPage(Integer page, Integer pageSize) {
         Page<Article> articlePage = new Page<>(page, pageSize);
-        IPage<Article> result = this.page(articlePage);
+
+        LambdaQueryWrapper<Article> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(Article::getCreateTime);
+
+        IPage<Article> result = this.page(articlePage,wrapper);
 
         Page<ArticleDTO> dtoPage = new Page<>();
         dtoPage.setCurrent(result.getCurrent());

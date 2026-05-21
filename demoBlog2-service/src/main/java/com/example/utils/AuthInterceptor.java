@@ -103,6 +103,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 request.setAttribute(USER_NAME_ATTRIBUTE, JwtUtil.getUserNameFromToken(realToken));
                 //request.setAttribute(USER_NAME_ATTRIBUTE, JwtUtil.getUserNameFromToken(realToken));
                 logger.debug("用户ID已存入request: {}", userId);
+                logger.debug("用户Name已存入request: {}", JwtUtil.getUserNameFromToken(realToken));
             }
             return true; // 放行
         } catch (Exception e) {
