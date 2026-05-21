@@ -3,7 +3,6 @@ package com.example.blo.impl;
 import com.example.blo.IReportDataBLO;
 import com.example.mapper.ArticleMapper;
 import com.example.mapper.UserMapper;
-import com.example.mapper.ContentMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,8 +21,7 @@ public class IReportDataBLOImpl implements IReportDataBLO {
     @Resource
     private UserMapper userMapper;
 
-    @Resource
-    private ContentMapper contentMapper;
+
 
     @Override
     public Map<String, Object> getArticleStatistics(Map<String, Object> params) {
