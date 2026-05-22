@@ -11,7 +11,9 @@ import com.example.entity.SocialTaxMsg;
 import com.example.entity.TaxReceiveMsg;
 import com.example.service.ISocialTaxMsgService;
 import com.example.service.ITaxReceiveMsgService;
+
 import com.example.utils.Idempotent;
+import com.example.utils.rabbitmq.RabbitmqMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,6 +35,9 @@ public class IRabbitmqBLOImpl implements IRabbitmqBLO {
 
     @Autowired
     private ITaxReceiveMsgService taxReceiveMsgService;
+
+    @Autowired
+    private RabbitmqMessageService rabbitmqMessageService;
 
     @Override
     public IPage<SocialTaxMsgDTO> getSocialPage(String status, int page, int size) {
@@ -58,7 +65,6 @@ public class IRabbitmqBLOImpl implements IRabbitmqBLO {
         }
 
         wrapper.orderByDesc(SocialTaxMsg::getCreateTime);
-
         IPage<SocialTaxMsg> entityPage = socialTaxMsgService.page(pageInfo, wrapper);
 
         Page<SocialTaxMsgDTO> dtoPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
@@ -72,7 +78,6 @@ public class IRabbitmqBLOImpl implements IRabbitmqBLO {
         dtoPage.setRecords(dtoList);
 
         return dtoPage;
-
     }
 
     @Override
@@ -90,10 +95,36 @@ public class IRabbitmqBLOImpl implements IRabbitmqBLO {
         msg.setSendStatus((byte) 1);
         msg.setSendTime(LocalDateTime.now());
         msg.setRetryCount(msg.getRetryCount() == null ? 1 : msg.getRetryCount() + 1);
+        msg.setMqTopic("social.to.tax.exchange");
+        msg.setUpdateTime(LocalDateTime.now());
 
         socialTaxMsgService.updateById(msg);
 
-        log.info("社保消息发送指令已下达，ID: {}, DataNo: {}", id, msg.getDataNo());
+        try {
+            Map<String, Object> message = new HashMap<>();
+            message.put("dataNo", msg.getDataNo());
+            message.put("unitName", msg.getUnitName());
+            message.put("unitCode", msg.getUnitCode());
+            message.put("feePeriod", msg.getFeePeriod());
+            message.put("feePeriodRef", msg.getFeePeriodRef());
+            message.put("areaCode", msg.getAreaCode());
+            message.put("amount", msg.getAmount());
+            message.put("taxSerialNo", msg.getTaxSerialNo());
+
+            rabbitmqMessageService.sendSocialToTax("social.send", message);
+
+            msg.setSendStatus((byte) 2);
+            socialTaxMsgService.updateById(msg);
+
+            log.info("社保消息发送成功，ID: {}, DataNo: {}", id, msg.getDataNo());
+
+        } catch (Exception e) {
+            log.error("发送 RabbitMQ 消息失败", e);
+            msg.setSendStatus((byte) 3);
+            msg.setRemark("发送失败: " + e.getMessage());
+            socialTaxMsgService.updateById(msg);
+            throw new RuntimeException("发送消息失败: " + e.getMessage());
+        }
     }
 
     @Override
@@ -120,11 +151,36 @@ public class IRabbitmqBLOImpl implements IRabbitmqBLO {
         msg.setReceiveMsg(null);
         msg.setReceiveTime(null);
         msg.setTaxSerialNo(null);
+        msg.setUpdateTime(LocalDateTime.now());
 
         socialTaxMsgService.updateById(msg);
 
-        log.info("社保消息重发指令已下达，ID: {}, DataNo: {}, 重试次数: {}",
-                id, msg.getDataNo(), msg.getRetryCount());
+        try {
+            Map<String, Object> message = new HashMap<>();
+            message.put("dataNo", msg.getDataNo());
+            message.put("unitName", msg.getUnitName());
+            message.put("unitCode", msg.getUnitCode());
+            message.put("feePeriod", msg.getFeePeriod());
+            message.put("feePeriodRef", msg.getFeePeriodRef());
+            message.put("areaCode", msg.getAreaCode());
+            message.put("amount", msg.getAmount());
+            message.put("taxSerialNo", msg.getTaxSerialNo());
+
+            rabbitmqMessageService.sendSocialToTax("social.send", message);
+
+            msg.setSendStatus((byte) 2);
+            socialTaxMsgService.updateById(msg);
+
+            log.info("社保消息重发成功，ID: {}, DataNo: {}, 重试次数: {}", 
+                    id, msg.getDataNo(), msg.getRetryCount());
+
+        } catch (Exception e) {
+            log.error("重发 RabbitMQ 消息失败", e);
+            msg.setSendStatus((byte) 3);
+            msg.setRemark("重发失败: " + e.getMessage());
+            socialTaxMsgService.updateById(msg);
+            throw new RuntimeException("重发消息失败: " + e.getMessage());
+        }
     }
 
     @Override
@@ -168,7 +224,6 @@ public class IRabbitmqBLOImpl implements IRabbitmqBLO {
         }
 
         wrapper.orderByDesc(TaxReceiveMsg::getCreateTime);
-
         IPage<TaxReceiveMsg> entityPage = taxReceiveMsgService.page(pageInfo, wrapper);
 
         Page<TaxReceiveMsgDTO> dtoPage = new Page<>(entityPage.getCurrent(), entityPage.getSize(), entityPage.getTotal());
@@ -182,7 +237,6 @@ public class IRabbitmqBLOImpl implements IRabbitmqBLO {
         dtoPage.setRecords(dtoList);
 
         return dtoPage;
-
     }
 
     @Override
@@ -209,7 +263,25 @@ public class IRabbitmqBLOImpl implements IRabbitmqBLO {
 
         taxReceiveMsgService.updateById(msg);
 
-        log.info("税务消息处理完成，ID: {}, DataNo: {}, 结果: {}, 说明: {}",
+        try {
+            Map<String, Object> reply = new HashMap<>();
+            reply.put("dataNo", msg.getDataNo());
+            reply.put("processResult", dto.getResult());
+            reply.put("processMsg", dto.getMsg());
+            reply.put("taxSerialNo", msg.getTaxSerialNo());
+            reply.put("replyTime", LocalDateTime.now().toString());
+
+            rabbitmqMessageService.sendTaxReplyToSocial("tax.reply", reply);
+
+            log.info("税务回执发送成功，ID: {}, DataNo: {}", id, msg.getDataNo());
+
+        } catch (Exception e) {
+            log.error("发送税务回执失败", e);
+            msg.setRemark("回执发送失败: " + e.getMessage());
+            taxReceiveMsgService.updateById(msg);
+        }
+
+        log.info("税务消息处理完成，ID: {}, DataNo: {}, 结果: {}, 说明: {}", 
                 id, msg.getDataNo(), dto.getResult(), dto.getMsg());
     }
 }

@@ -43,6 +43,17 @@ spring:
         acknowledge-mode: manual
         concurrency: 5
         max-concurrency: 10
+        prefetch: 1
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          max-interval: 10000
+          multiplier: 2.0
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
 
 mybatis-plus:
   configuration:
