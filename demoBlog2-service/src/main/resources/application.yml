@@ -41,3 +41,9 @@ management:
   endpoint:
     health:
       show-details: when-authorized
+
+sa-token:
+  token-name: Authorization
+  token-prefix: Bearer
+  is-read-cookie: false
+  is-read-header: true

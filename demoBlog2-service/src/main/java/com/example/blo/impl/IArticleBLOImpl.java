@@ -168,7 +168,7 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
     @Override
     @Idempotent(key = "save_article", expireTime = 3000, message = "文章保存中，请勿重复提交")
     @Transactional(rollbackFor = Exception.class)
-    public void saveArticle(Article article, MultipartFile[] files) {
+    public ArticleDTO saveArticle(Article article, MultipartFile[] files) {
         log.info("开始保存文章: {}", article);
 
         if (article.getTitle() == null || article.getTitle().trim().isEmpty()) {
@@ -192,7 +192,7 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
         if (article.getId() == null) {
             article.setAuthorId(currentUserId);
             article.setViewCount(0L);
-            article.setStatus(article.getStatus() == null ? 1 : article.getStatus()); // 默认发布
+            article.setStatus(article.getStatus() == null ? 0: article.getStatus()); // 默认发布
             //article.setIsTop(article.getIsTop() == null ? 0 : article.getIsTop());
 
             // 自动生成摘要：取内容的前100个字符
@@ -267,6 +267,32 @@ public class IArticleBLOImpl extends ServiceImpl<ArticleMapper, Article> impleme
 
 
         log.info("文章保存成功，ID: {}", article.getId());
+
+
+        // 将 Article 转换为 ArticleDTO
+        ArticleDTO dto = new ArticleDTO();
+        BeanUtils.copyProperties(article, dto);
+
+        // 查询并设置附件信息
+//        List<BlogAttachments> attachments = blogAttachmentsService.list(
+//                new LambdaQueryWrapper<BlogAttachments>()
+//                        .eq(BlogAttachments::getArticleId, article.getId())
+//                        .eq(BlogAttachments::getIsDelete, 0)
+//        );
+//
+//        if (attachments != null && !attachments.isEmpty()) {
+//            List<BlogAttachmentsDTO> attachmentDTOs = attachments.stream()
+//                    .map(att -> {
+//                        BlogAttachmentsDTO attDto = new BlogAttachmentsDTO();
+//                        BeanUtils.copyProperties(att, attDto);
+//                        return attDto;
+//                    })
+//                    .collect(Collectors.toList());
+//            dto.setAttachments(attachmentDTOs);
+//        }
+
+        return dto;
+
     }
 
 

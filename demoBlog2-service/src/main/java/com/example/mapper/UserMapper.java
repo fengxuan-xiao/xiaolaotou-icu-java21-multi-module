@@ -3,6 +3,7 @@ package com.example.mapper;
 import com.example.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -24,4 +25,5 @@ public interface UserMapper extends BaseMapper<User> {
      */
     List<Map<String, Object>> selectUserActivityStats(Map<String, Object> params);
 
+    User selectUserWithRoles(@Param("username") String username);
 }

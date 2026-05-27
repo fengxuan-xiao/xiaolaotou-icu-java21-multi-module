@@ -77,9 +77,9 @@ public class IArticleBPOImpl implements IArticleBPO {
             Article article = new Article();
             BeanUtils.copyProperties(articleDTO, article);
 
-            iArticleBLO.saveArticle(article, files);
+            ArticleDTO articleDTO1 = iArticleBLO.saveArticle(article, files);
 
-            return Result.success(articleDTO, "保存成功");
+            return Result.success(articleDTO1, "保存成功");
         } catch (IllegalArgumentException e) {
             log.warn("参数校验失败: {}", e.getMessage());
             return Result.error(e.getMessage());

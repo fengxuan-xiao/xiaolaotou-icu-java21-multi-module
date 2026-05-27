@@ -11,6 +11,8 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
 
+
+
   data:
     redis:
       host: localhost
@@ -23,6 +25,25 @@ spring:
           max-wait: -1ms
           max-idle: 8
           min-idle: 0
+
+  # Flowable配置
+  flowable:
+    async-executor-activate: true
+    database-schema-update: true
+    history-level: full
+    check-process-definitions: true
+    process-definition-location-prefix: classpath:/processes/
+
+# Sa-Token配置
+sa-token:
+  token-name: Authorization
+  timeout: 86400
+  active-timeout: -1
+  is-concurrent: true
+  is-share: false
+  token-style: uuid
+  is-log: false
+
 
   devtools:
     restart:
@@ -96,4 +117,8 @@ jimureport:
   enabled: true
   path: /jmreport
   datasource:
-    enabled: false
+    enabled: true
+    url: jdbc:mysql://localhost:3306/blog?useSSL=false&serverTimezone=UTC&characterEncoding=utf-8&allowPublicKeyRetrieval=true
+    username: root
+    password: "051213"
+    driver-class-name: com.mysql.cj.jdbc.Driver

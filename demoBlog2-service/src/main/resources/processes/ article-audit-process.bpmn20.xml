@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn"
+             targetNamespace="http://www.flowable.org/processdef">
+
+    <process id="article_audit_process" name="文章审核流程" isExecutable="true">
+
+        <startEvent id="start_event" name="开始"/>
+
+        <sequenceFlow id="flow1" sourceRef="start_event" targetRef="first_check_task"/>
+
+        <userTask id="first_check_task" name="初审" flowable:candidateGroups="first_check">
+            <documentation>初审员对文章进行初步审核</documentation>
+        </userTask>
+
+        <sequenceFlow id="flow2" sourceRef="first_check_task" targetRef="first_check_gateway"/>
+
+        <exclusiveGateway id="first_check_gateway" name="初审判断"/>
+
+        <sequenceFlow id="flow3" name="通过" sourceRef="first_check_gateway" targetRef="recheck_task">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[${approved}]]>
+            </conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow id="flow4" name="驳回" sourceRef="first_check_gateway" targetRef="end_rejected">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[${!approved}]]>
+            </conditionExpression>
+        </sequenceFlow>
+
+        <userTask id="recheck_task" name="复核" flowable:candidateGroups="recheck">
+            <documentation>复核员对文章进行最终审核</documentation>
+        </userTask>
+
+        <sequenceFlow id="flow5" sourceRef="recheck_task" targetRef="recheck_gateway"/>
+
+        <exclusiveGateway id="recheck_gateway" name="复核判断"/>
+
+        <sequenceFlow id="flow6" name="通过" sourceRef="recheck_gateway" targetRef="publish_task">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[${approved}]]>
+            </conditionExpression>
+        </sequenceFlow>
+
+        <sequenceFlow id="flow7" name="驳回" sourceRef="recheck_gateway" targetRef="end_rejected">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[${!approved}]]>
+            </conditionExpression>
+        </sequenceFlow>
+
+        <userTask id="publish_task" name="发布文章" flowable:assignee="${authorId}">
+            <documentation>作者确认发布文章</documentation>
+        </userTask>
+
+        <sequenceFlow id="flow8" sourceRef="publish_task" targetRef="end_published"/>
+
+        <endEvent id="end_published" name="发布完成"/>
+
+        <endEvent id="end_rejected" name="审核驳回"/>
+
+    </process>
+
+</definitions>

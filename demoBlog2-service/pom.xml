@@ -162,6 +162,27 @@
             <version>2.3.0</version>
         </dependency>
 
+        <!-- Sa-Token -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot3-starter</artifactId>
+            <version>1.37.0</version>
+        </dependency>
+
+        <!-- Sa-Token 整合 Redis -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-redis-jackson</artifactId>
+            <version>1.37.0</version>
+        </dependency>
+
+        <!-- Flowable -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter</artifactId>
+            <version>7.0.0</version>
+        </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>com.github.jsqlparser</groupId>-->
 <!--            <artifactId>jsqlparser</artifactId>-->

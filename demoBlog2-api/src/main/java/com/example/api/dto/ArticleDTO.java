@@ -24,6 +24,10 @@ public class ArticleDTO {
     private Integer likeCount;
     private Integer commentCount;
     private Integer sort;
+    private String processInstanceId;
+    private String taskId;
+    private Byte auditStatus;
+    private String auditRemark;
 
     List<BlogAttachmentsDTO> attachments;
 }

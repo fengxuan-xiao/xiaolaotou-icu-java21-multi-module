@@ -74,4 +74,16 @@ public interface ArticleMapper extends BaseMapper<Article> {
      * @return 标签统计数据
      */
     List<Map<String, Object>> selectTagStatistics();
+
+    List<Map<String, Object>> selectTodoTasks();
+
+    Article selectArticleByProcessInstanceId(@Param("processInstanceId") String processInstanceId);
+
+    int updateAuditStatus(@Param("articleId") Long articleId,
+                          @Param("auditStatus") Byte auditStatus,
+                          @Param("taskId") String taskId,
+                          @Param("auditRemark") String auditRemark);
+
+    int publishArticle(@Param("articleId") Long articleId);
+
 }

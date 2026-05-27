@@ -1,7 +1,9 @@
 package com.example.entity;
 
-import com.baomidou.mybatisplus.annotation.*;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.Getter;
@@ -13,7 +15,7 @@ import lombok.Setter;
  * </p>
  *
  * @author CodeGenerator
- * @since 2026-05-11
+ * @since 2026-05-22
  */
 @Getter
 @Setter
@@ -68,7 +70,6 @@ public class Article implements Serializable {
      * 0未删除 1已删除
      */
     @TableField("is_deleted")
-    @TableLogic
     private Byte isDeleted;
 
     /**
@@ -124,4 +125,28 @@ public class Article implements Serializable {
      */
     @TableField("sort")
     private Integer sort;
+
+    /**
+     * Flowable流程实例ID
+     */
+    @TableField("process_instance_id")
+    private String processInstanceId;
+
+    /**
+     * 当前待办任务ID
+     */
+    @TableField("task_id")
+    private String taskId;
+
+    /**
+     * 审核状态：0草稿、1待初审、2初审通过、3待复核、4复核通过、5驳回
+     */
+    @TableField("audit_status")
+    private Byte auditStatus;
+
+    /**
+     * 审核意见/驳回理由
+     */
+    @TableField("audit_remark")
+    private String auditRemark;
 }

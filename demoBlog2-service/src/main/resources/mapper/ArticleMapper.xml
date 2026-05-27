@@ -7,11 +7,32 @@
         <id column="id" property="id" />
         <result column="title" property="title" />
         <result column="content" property="content" />
+        <result column="author_id" property="authorId" />
+        <result column="author_name" property="authorName" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="is_deleted" property="isDeleted" />
+        <result column="status" property="status" />
+        <result column="summary" property="summary" />
+        <result column="cover_image" property="coverImage" />
+        <result column="category_id" property="categoryId" />
+        <result column="tags" property="tags" />
+        <result column="view_count" property="viewCount" />
+        <result column="like_count" property="likeCount" />
+        <result column="comment_count" property="commentCount" />
+        <result column="sort" property="sort" />
+        <result column="process_instance_id" property="processInstanceId" />
+        <result column="task_id" property="taskId" />
+        <result column="audit_status" property="auditStatus" />
+        <result column="audit_remark" property="auditRemark" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, title, content
+        id, title, content, author_id, author_name, create_time, update_time,
+        is_deleted, status, summary, cover_image, category_id, tags,
+        view_count, like_count, comment_count, sort,
+        process_instance_id, task_id, audit_status, audit_remark
     </sql>
 
     <!-- 逻辑删除文章 -->
@@ -106,4 +127,50 @@
         ORDER BY article_count DESC
             LIMIT 20
     </select>
+
+
+    <select id="selectTodoTasks" resultType="java.util.HashMap">
+        SELECT
+            a.id,
+            a.title as article_title,
+            a.author_name,
+            a.process_instance_id,
+            a.task_id,
+            a.audit_status,
+            a.create_time
+        FROM article a
+        WHERE a.is_deleted = 0
+          AND a.task_id IS NOT NULL
+          AND a.audit_status IN (1, 3)
+        ORDER BY a.create_time DESC
+    </select>
+
+    <select id="selectArticleByProcessInstanceId" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM article
+        WHERE process_instance_id = #{processInstanceId}
+        AND is_deleted = 0
+        LIMIT 1
+    </select>
+
+    <update id="updateAuditStatus">
+        UPDATE article
+        SET audit_status = #{auditStatus},
+            task_id = #{taskId},
+            audit_remark = #{auditRemark},
+            update_time = NOW()
+        WHERE id = #{articleId}
+          AND is_deleted = 0
+    </update>
+
+    <update id="publishArticle">
+        UPDATE article
+        SET status = 1,
+            audit_status = 4,
+            update_time = NOW()
+        WHERE id = #{articleId}
+          AND is_deleted = 0
+          AND audit_status = 4
+    </update>
 </mapper>
